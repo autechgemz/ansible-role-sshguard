@@ -14,7 +14,7 @@ None
 
 ## OS Platforms
 
-- CentOS-7
+- RHEL-8 or higher
 - Ubuntu-20.04
 - Ubuntu-22.04
 
