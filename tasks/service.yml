@@ -1,0 +1,15 @@
+---
+
+- name: Service tasks
+  when: not ansible_check_mode
+  tags:
+    - sshguard_service
+    - sshguard
+  become: true
+  block:
+    - name: Manage service
+      ansible.builtin.service:
+        name: "{{ sshguard_service_name }}"
+        state: "{{ sshguard_service_ensure }}"
+        enabled: "{{ sshguard_service_enable }}"
+      when: sshguard_service_name is defined and sshguard_service_name

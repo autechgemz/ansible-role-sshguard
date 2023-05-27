@@ -1,0 +1,13 @@
+---
+
+sshguard_debug: true
+
+sshguard_package_ensure: "present"
+
+sshguard_service_ensure: "started"
+
+sshguard_service_enable: true
+
+sshguard_config_options: {}
+
+sshguard_config_whitelist: {}

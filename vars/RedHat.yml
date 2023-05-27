@@ -1,0 +1,12 @@
+---
+
+sshguard_repos: true
+
+sshguard_package_name:
+  - sshguard
+
+sshguard_service_name: "sshguard"
+
+sshguard_config_file: "/etc/sshguard.conf"
+
+sshguard_config_whitelist_file: "/etc/sshguard.whitelist"

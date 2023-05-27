@@ -1,0 +1,35 @@
+---
+
+- name: Config tasks
+  tags:
+    - sshguard_config
+    - sshguard
+  become: true
+  block:
+    - name: Merge configration
+      ansible.builtin.set_fact:
+        sshguard_config_merged: "{{ sshguard_config_default | ansible.builtin.combine(sshguard_config_options, recursive=True) }}"
+
+    - name: Debug variables
+      ansible.builtin.include_tasks: debug/config.yml
+      when: sshguard_debug is defined and sshguard_debug
+
+    - name: Generate sshguard config file
+      ansible.builtin.template:
+        src: sshguard.conf.j2
+        dest: "{{ sshguard_config_file }}"
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart service
+      when: sshguard_config_merged is defined and sshguard_config_merged
+
+    - name: Generate sshguard whitelist file
+      ansible.builtin.template:
+        src: "sshguard.whitelist.j2"
+        dest: "{{ sshguard_config_whitelist_file }}"
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart service
+      when: sshguard_config_whitelist is defined and sshguard_config_whitelist

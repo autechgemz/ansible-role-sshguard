@@ -1,0 +1,13 @@
+---
+- name: Debug config tasks
+  when: sshguard_debug is defined and sshguard_debug
+  block:
+    - name: Print sshguard_config_options
+      ansible.builtin.debug:
+        var: sshguard_config_options
+    - name: Print sshguard_config_default
+      ansible.builtin.debug:
+        var: sshguard_config_default
+    - name: Print sshguard_config_merged
+      ansible.builtin.debug:
+        var: sshguard_config_merged

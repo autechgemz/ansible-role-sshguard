@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+{% if sshguard_config_whitelist is defined and sshguard_config_whitelist %}
+{% for white_addr in sshguard_config_whitelist %}
+{{ white_addr }}
+{% endfor %}
+{% endif %}

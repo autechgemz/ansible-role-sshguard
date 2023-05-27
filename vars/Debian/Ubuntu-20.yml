@@ -1,0 +1,9 @@
+---
+
+sshguard_config_default:
+  BACKEND: "/usr/lib/x86_64-linux-gnu/sshg-fw-iptables"
+  LOGREADER: "LANG: C /bin/journalctl -afb -p info -n1 -o cat SYSLOG_FACILITY: 4 SYSLOG_FACILITY: 10"
+  THRESHOLD: 30
+  BLOCK_TIME: 120
+  DETECTION_TIME: 1800
+  WHITELIST_FILE: /etc/sshguard/whitelist

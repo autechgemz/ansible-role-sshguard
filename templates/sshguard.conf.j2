@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+{% if sshguard_config_default is defined and sshguard_config_default %}
+{% for key, value in sshguard_config_default.items() %}
+{{ key }}="{{ value }}"
+{% endfor %}
+{% endif %}
