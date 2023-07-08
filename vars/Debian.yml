@@ -10,3 +10,5 @@ sshguard_service_name: "sshguard"
 sshguard_config_file: "/etc/sshguard/sshguard.conf"
 
 sshguard_config_whitelist_file: "/etc/sshguard/whitelist"
+
+sshguard_service_override_dir: "/etc/systemd/system/sshguard.service.d"

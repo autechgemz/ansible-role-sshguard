@@ -1,8 +1,16 @@
 ---
 
-- name: Restart service
+- name: Restart sshguard
   ansible.builtin.systemd:
     name: "{{ sshguard_service_name }}"
     state: restarted
+  when: not ansible_check_mode
+  become: true
+
+- name: Restart sshguard unit
+  ansible.builtin.systemd:
+    name: "{{ sshguard_service_name }}"
+    state: restarted
+    daemon_reload: true
   when: not ansible_check_mode
   become: true

@@ -58,11 +58,17 @@ sshguard_config_options: {}
 sshguard_config_whitelist: {}
 ```
 
+### sshguard_execmode: 'iptables' or 'nftables'
+
+```
+sshguard_execmode: 'iptables'
+```
+
 ## Example vars
 
 ```
 sshguard_config_options:
-  BACKEND: "/usr/libexec/sshguard/sshg-fw-nft-sets"
+  BACKEND: "/usr/libexec/sshguard/sshg-fw-iptables"
   LOGREADER: "LANG=C journalctl -afb -p info -n1 -t sshd -o cat"
   THRESHOLD: 30
   BLOCK_TIME: 120

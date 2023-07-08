@@ -1,0 +1,20 @@
+[Service]
+{% if sshguard_execmode == 'nftables' %}
+ExecStartPre=
+ExecStartPre=
+ExecStartPre=-/usr/sbin/nft add table ip sshguard
+ExecStartPre=-/usr/sbin/nft add table ip6 sshguard
+ExecStopPost=
+ExecStopPost=
+ExecStopPost=-/usr/sbin/nft delete table ip sshguard
+ExecStopPost=-/usr/sbin/nft delete table ip6 sshguard
+{% else %}
+ExecStartPre=
+ExecStartPre=
+ExecStartPre=-/usr/sbin/iptables -N sshguard
+ExecStartPre=-/usr/sbin/ip6tables -N sshguard
+ExecStopPost=
+ExecStopPost=
+ExecStopPost=-/usr/sbin/iptables -X sshguard
+ExecStopPost=-/usr/sbin/ip6tables -X sshguard
+{% endif %}

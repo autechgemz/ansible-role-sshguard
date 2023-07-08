@@ -21,7 +21,7 @@
         owner: root
         group: root
         mode: 0644
-      notify: Restart service
+      notify: Restart sshguard
       when: sshguard_config_merged is defined and sshguard_config_merged
 
     - name: Generate sshguard whitelist file
@@ -31,5 +31,20 @@
         owner: root
         group: root
         mode: 0644
-      notify: Restart service
+      notify: Restart sshguard
       when: sshguard_config_whitelist is defined and sshguard_config_whitelist
+
+    - name: Generate override directory
+      ansible.builtin.file:
+        path: "{{ sshguard_service_override_dir }}"
+        state: directory
+
+    - name: Generate override sshgaurd service file
+      when: sshguard_execmode == 'iptables' or sshguard_execmode == 'nftables'
+      ansible.builtin.template:
+        src: "sshguard.service.j2"
+        dest: "{{ sshguard_service_override_dir }}/override.conf"
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart sshguard unit

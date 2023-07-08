@@ -11,3 +11,5 @@ sshguard_service_enable: true
 sshguard_config_options: {}
 
 sshguard_config_whitelist: {}
+
+sshguard_execmode: 'iptables'
