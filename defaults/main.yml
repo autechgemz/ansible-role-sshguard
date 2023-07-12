@@ -1,6 +1,6 @@
 ---
 
-sshguard_debug: true
+sshguard_debug: false
 
 sshguard_package_ensure: "present"
 
