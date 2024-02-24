@@ -1,0 +1,115 @@
+---
+
+- name: All
+  hosts: all
+  user: ec2-user
+
+  vars:
+    use_version: "2.4.3"
+    auto_release: "1"
+    execmode: 'nftables'
+
+  tasks:
+
+    - name: "Build tasks"
+      when: ansible_os_family == 'RedHat' and ansible_distribution == 'Amazon'
+      block:
+
+        - name: Install development tools
+          become: true
+          ansible.builtin.yum:
+            name: ["gcc", "rpm-build", "rpmdevtools", "git", "make", "flex", "byacc"]
+            state: present
+
+        - name: Create rpmtree
+          ansible.builtin.shell: |
+            rpmdev-setuptree
+          args:
+            creates: "$HOME/rpmbuild"
+
+        - name: Download repository
+          ansible.builtin.git:
+            repo: https://src.fedoraproject.org/rpms/sshguard.git
+            dest: "$HOME/rpmbuild/SOURCES"
+            version: main
+            update: false
+
+        - name: Add rpmmacros
+          ansible.builtin.lineinfile:
+            dest: $HOME/.rpmmacros
+            line: "{{ item }}"
+          with_items:
+            - '%autorelease {{ auto_release }}'
+
+        - name: Modify spec
+          ansible.builtin.lineinfile:
+            dest: "$HOME/rpmbuild/SOURCES/sshguard.spec"
+            backrefs: true
+            regexp: '^Version: '
+            line: 'Version: {{ use_version }}'
+
+        - name: Download source
+          ansible.builtin.shell:
+            cmd: 'spectool -g -R sshguard.spec'
+          args:
+            chdir: "$HOME/rpmbuild/SOURCES/"
+            creates: "$HOME/rpmbuild/SOURCES/sshguard-{{ use_version }}.tar.gz"
+            executable: /bin/bash
+
+        - name: Build RPM packages
+          ansible.builtin.shell:
+            cmd: 'rpmbuild -bb sshguard.spec'
+          args:
+            chdir: "$HOME/rpmbuild/SOURCES/"
+            creates: "$HOME/rpmbuild/RPMS/x86_64"
+            executable: /bin/bash
+
+        - name: Copy RPM packages
+          ansible.builtin.copy:
+            src: "$HOME/rpmbuild/RPMS/x86_64/{{ item }}"
+            dest: "/tmp/{{ item }}"
+            mode: '0644'
+            remote_src: true
+          with_items:
+            - "sshguard-{{ execmode }}-{{ use_version }}-{{ auto_release }}.x86_64.rpm"
+            - "sshguard-{{ use_version }}-{{ auto_release }}.x86_64.rpm"
+
+        - name: Install Packages
+          become: true
+          ansible.builtin.yum:
+            name: ["/tmp/sshguard-{{ execmode }}-{{ use_version }}-{{ auto_release }}.x86_64.rpm", "/tmp/sshguard-{{ use_version }}-{{ auto_release }}.x86_64.rpm"]
+            disable_gpg_check: true
+            state: present
+
+        - name: Manage service
+          become: true
+          ansible.builtin.service:
+            name: "sshguard.service"
+            state: started
+            enabled: true
+
+        - name: Clean RPM packages
+          become: true
+          ansible.builtin.file:
+            path: "/tmp/{{ item }}"
+            state: absent
+          with_items:
+            - "sshguard-{{ execmode }}-{{ use_version }}-{{ auto_release }}.x86_64.rpm"
+            - "sshguard-{{ use_version }}-{{ auto_release }}.x86_64.rpm"
+
+        - name: Remove development tools
+          become: true
+          ansible.builtin.yum:
+            name: ["gcc", "rpm-build", "rpmdevtools", "git", "make", "flex", "byacc"]
+            state: absent
+
+        - name: Remove rpmbuild tree
+          ansible.builtin.file:
+            path: $HOME/rpmbuild
+            state: absent
+
+      rescue:
+        - name: Print Error
+          ansible.builtin.debug:
+            msg: "Unsupport platform or error occurred due to some reason."
+          failed_when: true
