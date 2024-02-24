@@ -11,16 +11,16 @@
         name: [ "epel-release" ]
         state: present
       when:
-        - ansible_os_family == 'RedHat'
+        - ansible_os_family == 'RedHat' and ansible_distribution != 'Amazon'
         - sshguard_repos is defined and sshguard_repos
     - name: Install sshguard package
       ansible.builtin.yum:
         name: "{{ sshguard_package_name }}"
-        state: "{{ sshguard_package_ensure }}" 
+        state: "{{ sshguard_package_ensure }}"
       when: ansible_os_family == 'RedHat'
     - name: Install sshguard package
       ansible.builtin.apt:
         name: "{{ sshguard_package_name }}"
-        state: "{{ sshguard_package_ensure }}" 
+        state: "{{ sshguard_package_ensure }}"
         force_apt_get: true
       when: ansible_os_family == 'Debian'
