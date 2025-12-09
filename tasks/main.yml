@@ -1,6 +1,9 @@
 ---
 
 - name: Main tasks
+  when:
+    - ansible_facts.os_family in ['RedHat', 'Debian']
+    - ansible_facts.distribution != 'Amazon'
   tags:
     - sshguard_install
     - sshguard_config
