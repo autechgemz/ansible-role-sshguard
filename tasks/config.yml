@@ -12,7 +12,7 @@
 
     - name: Debug variables
       ansible.builtin.include_tasks: debug/config.yml
-      when: sshguard_debug is defined and sshguard_debug
+      when: sshguard_debug is defined and sshguard_debug | bool
 
     - name: Generate sshguard config file
       ansible.builtin.template:
@@ -22,7 +22,7 @@
         group: root
         mode: 0644
       notify: Restart sshguard
-      when: sshguard_config_merged is defined and sshguard_config_merged
+      when: sshguard_config_merged is defined and sshguard_config_merged | length > 0
 
     - name: Generate sshguard whitelist file
       ansible.builtin.template:
@@ -32,7 +32,7 @@
         group: root
         mode: 0644
       notify: Restart sshguard
-      when: sshguard_config_whitelist is defined and sshguard_config_whitelist
+      when: sshguard_config_whitelist is defined and sshguard_config_whitelist | length > 0
 
     - name: Generate override directory
       ansible.builtin.file:
