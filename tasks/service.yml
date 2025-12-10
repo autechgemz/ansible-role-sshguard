@@ -12,4 +12,4 @@
         name: "{{ sshguard_service_name }}"
         state: "{{ sshguard_service_ensure }}"
         enabled: "{{ sshguard_service_enable }}"
-      when: sshguard_service_name is defined and sshguard_service_name
+
